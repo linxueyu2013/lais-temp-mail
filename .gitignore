@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+.wrangler/
+lais-temp-mail.zip
