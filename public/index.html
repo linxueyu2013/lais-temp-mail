@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>莱斯临时邮箱 · Temp Mail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="aurora" aria-hidden="true">
+    <span class="orb o1"></span>
+    <span class="orb o2"></span>
+    <span class="orb o3"></span>
+    <span class="orb o4"></span>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="hero">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2.5"></rect>
+            <path d="m22 7-10 6L2 7"></path>
+          </svg>
+        </span>
+        <span class="brand-name">莱斯 · TempMail</span>
+      </div>
+
+      <h1 class="title">你的<span class="grad">临时邮箱</span><br/>随用随弃，干净利落</h1>
+      <p class="subtitle">即开即用的匿名收件箱 · 守护真实邮箱，告别验证码与垃圾邮件</p>
+
+      <div class="pill-row">
+        <span class="pill"><span class="dot"></span>无需注册</span>
+        <span class="pill"><span class="dot"></span>秒级创建</span>
+        <span class="pill"><span class="dot"></span>一键销毁</span>
+      </div>
+    </header>
+
+    <!-- 创建视图 -->
+    <section id="createView" class="panel">
+      <div class="panel-grid">
+        <div class="panel-main">
+          <h2 class="panel-title">创建临时邮箱</h2>
+          <p class="panel-desc">选一个域名，前缀留空即随机生成。任务完成后记得销毁，保持公平速率。</p>
+
+          <form id="createForm" class="form">
+            <div class="field">
+              <label for="tld">顶级域名</label>
+              <div class="select-wrap">
+                <select id="tld" name="tld">
+                  <option value="com">com — 通用</option>
+                  <option value="cyou">cyou — 个性</option>
+                  <option value="site">site — 站点</option>
+                  <option value="store">store — 商城</option>
+                  <option value="edu">edu — 学术</option>
+                </select>
+                <svg class="chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="prefix">自定义前缀（可选）</label>
+              <input id="prefix" name="prefix" type="text" maxlength="32"
+                     placeholder="留空则随机生成（推荐）" autocomplete="off" spellcheck="false" />
+              <small class="hint">仅限字母与数字；部分上游不支持自定义，实际地址以返回为准。</small>
+            </div>
+
+            <button type="submit" class="cta" id="createBtn">
+              <span class="cta-label">生成临时邮箱</span>
+              <span class="cta-shine"></span>
+              <span class="spinner" hidden></span>
+            </button>
+          </form>
+        </div>
+
+        <aside class="features">
+          <div class="feat">
+            <span class="feat-ic">🛡️</span>
+            <div><b>隐私优先</b><p>不收集信息，地址即用即弃</p></div>
+          </div>
+          <div class="feat">
+            <span class="feat-ic">📨</span>
+            <div><b>即时收件</b><p>自动轮询，新邮件实时提醒</p></div>
+          </div>
+          <div class="feat">
+            <span class="feat-ic">♻️</span>
+            <div><b>绿色使用</b><p>用完即销毁，保持公平速率</p></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 邮箱视图 -->
+    <section id="mailView" class="panel hidden">
+      <div class="mail-head">
+        <div class="addr-card">
+          <span class="label-sm">邮箱地址</span>
+          <div class="addr-line">
+            <code id="mailAddr">—</code>
+            <button class="icon-btn" id="copyAddr" title="复制地址" aria-label="复制地址">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="expire-card">
+          <span class="label-sm">距过期</span>
+          <div class="countdown" id="countdown">—</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="switch">
+          <input type="checkbox" id="autoRefresh" checked />
+          <span class="slider"></span>
+          <span class="switch-label">自动刷新</span>
+        </label>
+        <button class="btn btn-ghost" id="refreshBtn">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          立即刷新
+        </button>
+        <button class="btn btn-test" id="sendTestBtn" title="跳转到第三方测试发信页">
+          发测试邮件（第三方）
+        </button>
+        <button class="btn btn-danger" id="deleteBtn">销毁邮箱</button>
+      </div>
+
+      <div class="notice">
+        <span class="notice-ic">ℹ️</span>
+        <span><strong>关于「发件」：</strong>莱斯邮件服务（该 API）仅提供<em>收件</em>能力，没有发件接口。点「发测试邮件」可在第三方页面给本地址发一封真实测试信，随后在下方收件箱看到它，用来验证收件链路。</span>
+      </div>
+
+      <div class="inbox">
+        <aside class="mail-list" id="mailList">
+          <div class="empty" id="emptyState">
+            <div class="empty-emoji">📭</div>
+            <p>收件箱为空</p>
+            <small class="muted">正在等待邮件…（自动刷新已开启）</small>
+          </div>
+        </aside>
+        <div class="mail-detail" id="mailDetail">
+          <div class="detail-placeholder">
+            <div class="empty-emoji">✉️</div>
+            <p>选择左侧邮件查看内容</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>API 由 <code>laisilsyx.tw.cpolar.io</code> 提供 · 本页仅作前端封装</span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
